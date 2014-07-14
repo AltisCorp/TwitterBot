@@ -9,7 +9,7 @@
 //
 
 var natural = require('natural'),
-	fs = require("fs"),
+	fs = require("fs"),          
 	readline = require("readline");
 
 var tokenizer = new natural.WordTokenizer(),
@@ -21,8 +21,8 @@ Load the training sets
 
 **/
 
-//Sander's CSV trainer
-function parseSandersCSV(dir) {
+//Sander's CSV parser and trainer
+function processSandersCSV(dir) {
 	parseCSV(dir, function(line) {
 		var processedLine = removeExtraneous(line);
 		//remove pos/neg tags from processed line
@@ -45,12 +45,10 @@ function parseSandersCSV(dir) {
 	});
 }
 
-parseGoEtAlCSV("data/twitter-sanders-apple2.csv");
+processSandersCSV("data/twitter-sanders-apple2.csv");
 //parseSandersCSV("data/twitter-sanders-apple3.csv");
 
-
-function 
-
+classifier.train();
 
 /**
 
@@ -58,7 +56,24 @@ Test against very large data set
 
 **/
 
+function processGoEtAlCSV(dir) {
+	var correct = 0,
+		total = 0;
 
+	parseCSV(dir, function(line) {
+		var delimiter = ',',
+			tokens = line.split(delimiter);
+		
+		//numerical rating always second character
+		var rating = parseInt(line.substr(1,1));
+		var tweet = tokens[5].replace(/"/g, ""); //remove double quotes
+		tweet = removeExtraneous(tweet);
+
+		console.log("rating: " + rating + " tweet: " + tweet);
+	});
+}
+
+processGoEtAlCSV("data/training.1600000.processed.noemoticon.csv");
 
 
 
