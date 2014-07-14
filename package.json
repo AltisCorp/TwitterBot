@@ -1,0 +1,30 @@
+{
+  "name": "TwitterBot",
+  "version": "0.0.0",
+  "description": "Twitterbot for Taxi feedback",
+  "main": "bot/mbtbot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Code-for-Miami/TwitterBot.git"
+  },
+  "keywords": [
+    "miami",
+    "taxi",
+    "twitter",
+    "feedback"
+  ],
+  "author": "Kevin Hernandez",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Code-for-Miami/TwitterBot/issues"
+  },
+  "homepage": "https://github.com/Code-for-Miami/TwitterBot",
+  "dependencies": {
+    "express": "^4.6.1",
+    "socket.io": "^1.0.6",
+    "twit": "^1.1.15"
+  }
+}
