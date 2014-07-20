@@ -7,7 +7,6 @@
 //  implementation. The resulting output: classifier.json is all that is needed 
 //  to recall this training.
 //
-
 var natural = require('natural'),
 	fs = require("fs"),          
 	readline = require("readline");

@@ -27,10 +27,14 @@ Bot.prototype.search = function (params, callback) {
   this.twit.get('search/tweets', params, callback);
 };
 
+//
+//Stream tweets given params
+//
+Bot.prototype.stream = function (params, callback) {
+  var stream = this.twit.stream('statuses/filter', params);
+  stream.on('tweet', callback);
+}
 
-function wordInString(s, word) {
-  return new RegExp('\\b' + word + '\\b', 'i').test(s);
-};
 
 function randIndex (arr) {
   var index = Math.floor(arr.length*Math.random());

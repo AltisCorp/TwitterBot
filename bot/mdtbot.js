@@ -8,11 +8,12 @@ var Bot = require('./bot')
 
 server.listen(8080);
 
-//routing
+//Routing
 app.get('/', function (req, res) { 
   res.sendfile(__dirname + '/index.html');
 });
 
+//Initialize bot with API credentials
 var bot = new Bot(config1);
 
 console.log('MDTFeedback: Running.');
@@ -21,38 +22,45 @@ io.sockets.on('connection', function(socket) {
   console.log('Connected');
 })
 
-//get date string for today's date (e.g. '2011-01-01')
+//Get date string for today's date (e.g. '2011-01-01')
 function datestring () {
-  var d = new Date(Date.now() - 5*60*60*1000);  //est timezone
+  var d = new Date(Date.now() - 5*60*60*1000);  //EST timezone
   return d.getUTCFullYear()   + '-'
-     +  (d.getUTCMonth() + 1) + '-'
-     +   d.getDate();
+  +  (d.getUTCMonth() + 1) + '-'
+  +   d.getDate();
 };
 
 setInterval(function() {
-  //Display all tweets from the miami area that mention 'taxi' or 'cab'
-  var params = {
-    q: "taxi OR cab"
-  , since: datestring()
-    //geocode lat/long epicenter followed by radius
-  , geocode: "25.79,-80.22,6mi" //TODO: not entirely accurate
-  , result_type: "recent"
-  };
+  //Bounding box of miami area: SW, NE
+  var miami = ['-80.3','25.7','-80.1','25.9']; //TODO: may be innacurate
+  var params = {locations: miami};
+  // If a tweet has any of these words
+  var keyWords = ["taxi", "cab", "taxis", "cabs"] 
 
-  bot.search(params, function(err, reply) {
-    if(err) return handleError(err);
-    var tweets = reply.statuses;
-    var arrayLength = tweets.length;
+  bot.stream(params, function(tweet) {
+    var text = tweet.text;
 
-    //stream each tweet to client side
-    for (var i=0; i<arrayLength; i++) {
-      io.sockets.emit('stream', tweets[i].text);
+    if(!tweet.retweeted) { //ignore retweets
+      //filter only tweets that contain keywords
+      if (wordsInString(text, keyWords)) {
+        io.sockets.emit(text);
+        console.log(text);
+      }
     }
   });
+}, 5000); //Every 5 seconds
 
-}, 5000); //Every 40 seconds
-
-function handleError(err) {
-  console.error('response status:', err.statusCode);
-  console.error('data:', err.data);
-}
+//@param s - string to be compared
+//@param words - array of words to be tested
+//@return whether or not s contains any of the words in the words array
+function wordsInString(s, words) {
+  var word;
+  s = s.toLowerCase();
+  for (var i=0; i<words.length; i++) {
+    word = words[i].toLowerCase();
+    if (new RegExp('\\b' + word + '\\b', 'i').test(s)) {
+      return true;
+    }
+  }
+  return false;
+};
