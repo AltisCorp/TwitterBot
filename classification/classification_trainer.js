@@ -10,6 +10,7 @@
 var natural = require('natural'),
 	fs = require("fs"),          
 	readline = require("readline");
+var counter = 0;
 
 var tokenizer = new natural.WordTokenizer(),
 	classifier = new natural.BayesClassifier();
@@ -29,9 +30,8 @@ function processTrainingData(dir) {
 		//numerical rating always second character
 		var rating = tokens[0].replace(/"/g, "");
 		var tweet = tokens[1].replace(/"/g, ""); //remove double quotes
-		console.log(rating);
-		console.log(tweet);
-
+		tweet = removeExtraneous(tweet);
+		//console.log(rating, tweet);
 		switch(rating) {
 			case "0": //this is a negative tweet
 				classifier.addDocument(tweet, "negative");
@@ -46,7 +46,11 @@ function processTrainingData(dir) {
 				console.log("Error: unknown rating ", rating, " on tweet ",
 							tweet);
 		}
-		console.log(rating, tweet)
+		counter++;
+		//Train every 1000 documents added
+		if (counter % 1000 == 0) {
+			classifier.train()
+		}
 	});
 }
 
@@ -83,9 +87,6 @@ function trainCSV(filename, callback) {
 	});
 
 	rl.on("close", function() {
-		console.log("Now training documents...");
-		classifier.train();
-
 		classifier.save('classifier.json', function(err, classifier) {
     		console.log("Training completed and saved!");
 		});
@@ -95,7 +96,7 @@ function trainCSV(filename, callback) {
 	});
 }
 
-processTrainingData("data/training0and4trimmed.csv");
+processTrainingData("data/trainingTrimmed.csv");
 
 /**
 
