@@ -10,7 +10,13 @@
 var natural = require('natural'),
 	fs = require("fs"),          
 	readline = require("readline");
+
 var counter = 0;
+var negMax = 50000; //number of positive tweets collected
+var posMax = 50000; //number of negative tweets collected
+var negTotal, neuTotal, posTotal;
+negTotal = neuTotal = posTotal = 0;
+
 
 var tokenizer = new natural.WordTokenizer(),
 	classifier = new natural.BayesClassifier();
@@ -34,19 +40,24 @@ function processTrainingData(dir) {
 		//console.log(rating, tweet);
 		switch(rating) {
 			case "0": //this is a negative tweet
-				classifier.addDocument(tweet, "negative");
+				if (negTotal < negMax) {
+					classifier.addDocument(tweet, "negative");
+					counter++;
+				}
 				break;
 			case "2": //this is a neutral tweet
 				classifier.addDocument(tweet, "neutral");
 				break;
 			case "4": //this is a positive tweet
-				classifier.addDocument(tweet, "positive");
+				if (posTotal < posMax) {
+					classifier.addDocument(tweet, "positive");
+					counter++;
+				}
 				break;
 			default: //parsing error
 				console.log("Error: unknown rating ", rating, " on tweet ",
 							tweet);
 		}
-		counter++;
 		//Train every 1000 documents added
 		if (counter % 1000 == 0) {
 			classifier.train()
@@ -56,8 +67,6 @@ function processTrainingData(dir) {
 
 function trainCSV(filename, callback) {
 	var file = filename;
-	var negTotal, neuTotal, posTotal;
-	negTotal = neuTotal = posTotal = 0;
 
 	var rl = readline.createInterface({
 		input: fs.createReadStream(file),
