@@ -1,7 +1,7 @@
 //
 //  Classification trainer
 //  This class is used to train our Naive Bayes classification using an open
-//  corpus of data by Sanders as well as Go et. al. 
+//  corpus of data by Go et. al. 
 //  
 //  This code is posted as reference and will not be used in final 
 //  implementation. The resulting output: classifier.json is all that is needed 
@@ -16,67 +16,82 @@ var tokenizer = new natural.WordTokenizer(),
 
 /**
 
-Load the training sets
+Train the classifier
 
 **/
 
-//Sander's CSV parser and trainer
-function processSandersCSV(dir) {
-	parseCSV(dir, function(line) {
-		var processedLine = removeExtraneous(line);
-		//remove pos/neg tags from processed line
-		processedLine = processedLine.substring(4);
-
-		//In this data set, the first 3 chars are "Pos" or "Neg"
-		switch(line.substr(0,3).toLowerCase()) {
-			case "pos":
-				classifier.addDocument(processedLine, 'positive');
-				break;
-			case "neg": 
-				classifier.addDocument(processedLine, 'negative');
-				break;
-			default: 
-				//an error has occured. Line misformatted
-				console.log(line);
-				console.log("ERROR: malformed line in " + dir);
-				break;
-		}
-	});
-}
-
-processSandersCSV("data/twitter-sanders-apple2.csv");
-//parseSandersCSV("data/twitter-sanders-apple3.csv");
-
-classifier.train();
-
-/**
-
-Test against very large data set
-
-**/
-
-function processGoEtAlCSV(dir) {
-	var correct = 0,
-		total = 0;
-
-	parseCSV(dir, function(line) {
+function processTrainingData(dir) {
+	//Track number of tweets trained
+	trainCSV(dir, function(line) {
 		var delimiter = ',',
 			tokens = line.split(delimiter);
-		
+
 		//numerical rating always second character
 		var rating = parseInt(line.substr(1,1));
 		var tweet = tokens[5].replace(/"/g, ""); //remove double quotes
 		tweet = removeExtraneous(tweet);
 
-		console.log("rating: " + rating + " tweet: " + tweet);
+		switch(rating) {
+			case 0: //this is a negative tweet
+				classifier.addDocument(tweet, "negative");
+				break;
+			case 2: //this is a neutral tweet
+				classifier.addDocument(tweet, "neutral");
+				break;
+			case 4: //this is a positive tweet
+				classifier.addDocument(tweet, "positive");
+				break;
+			default: //parsing error
+				console.log("Error: unknown rating ", rating, " on tweet ",
+							tweet);
+		}
 	});
 }
 
-processGoEtAlCSV("data/training.1600000.processed.noemoticon.csv");
+function trainCSV(filename, callback) {
+	var file = filename;
+	var negTotal, neuTotal, posTotal;
+	negTotal = neuTotal = posTotal = 0;
 
+	var rl = readline.createInterface({
+		input: fs.createReadStream(file),
+		output: null,
+		terminal: false
+	})
 
+	rl.on("line", callback);
 
+	classifier.events.on('trainedWithDocument', function (obj) {
+	   var rating = obj.doc.label;
+   		switch(rating) {
+		case "negative": //this is a negative tweet
+			negTotal++;
+			break;
+		case "neutral": //this is a neutral tweet
+			neuTotal++;
+			break;
+		case "positive": //this is a positive tweet
+			posTotal++;
+			break;
+		default: //this should not happen...
+			console.log("Error: unknown classification ", rating);
+		}
+	});
 
+	rl.on("close", function() {
+		console.log("Now training documents...");
+		classifier.train();
+
+		classifier.save('classifier.json', function(err, classifier) {
+    		console.log("Training completed and saved!");
+		});
+
+		console.log("Trained", posTotal, "positive tweets", neuTotal
+					,"neutral tweets, and", negTotal, "negative tweets");
+	});
+}
+
+processTrainingData("data/training.1600000.processed.noemoticon.csv");
 
 /**
 
@@ -92,20 +107,3 @@ function removeExtraneous(line) {
 	line = line.replace(/@\w+/gi, '');  //remove user
 	return line;
 }
-
-
-function parseCSV(filename, callback) {
-	var file = filename;
-
-	var rl = readline.createInterface({
-		input: fs.createReadStream(file),
-		output: null,
-		terminal: false
-	})
-
-	rl.on("line", callback);
-
-	rl.on("close", function() {
-		console.log("All data processed.");
-	});
-};
