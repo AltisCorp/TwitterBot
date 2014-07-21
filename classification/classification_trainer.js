@@ -27,24 +27,26 @@ function processTrainingData(dir) {
 			tokens = line.split(delimiter);
 
 		//numerical rating always second character
-		var rating = parseInt(line.substr(1,1));
-		var tweet = tokens[5].replace(/"/g, ""); //remove double quotes
-		tweet = removeExtraneous(tweet);
+		var rating = tokens[0].replace(/"/g, "");
+		var tweet = tokens[1].replace(/"/g, ""); //remove double quotes
+		console.log(rating);
+		console.log(tweet);
 
 		switch(rating) {
-			case 0: //this is a negative tweet
+			case "0": //this is a negative tweet
 				classifier.addDocument(tweet, "negative");
 				break;
-			case 2: //this is a neutral tweet
+			case "2": //this is a neutral tweet
 				classifier.addDocument(tweet, "neutral");
 				break;
-			case 4: //this is a positive tweet
+			case "4": //this is a positive tweet
 				classifier.addDocument(tweet, "positive");
 				break;
 			default: //parsing error
 				console.log("Error: unknown rating ", rating, " on tweet ",
 							tweet);
 		}
+		console.log(rating, tweet)
 	});
 }
 
@@ -76,6 +78,8 @@ function trainCSV(filename, callback) {
 		default: //this should not happen...
 			console.log("Error: unknown classification ", rating);
 		}
+		console.log("Trained", posTotal, "positive tweets", neuTotal
+					,"neutral tweets, and", negTotal, "negative tweets");
 	});
 
 	rl.on("close", function() {
@@ -91,7 +95,7 @@ function trainCSV(filename, callback) {
 	});
 }
 
-processTrainingData("data/training.1600000.processed.noemoticon.csv");
+processTrainingData("data/training0and4trimmed.csv");
 
 /**
 
