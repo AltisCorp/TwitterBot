@@ -11,11 +11,26 @@ var natural = require('natural'),
 	fs = require("fs"),          
 	readline = require("readline");
 
+//////////
+/**
+
+Variables to track tweet corpus data
+
+**/
+
 var counter = 0;
-var negMax = 50000; //number of positive tweets collected
-var posMax = 50000; //number of negative tweets collected
+
+var negMax = 50000; //number of positive tweets to be collected
+var posMax = 50000; //number of negative tweets to be ollected
+
 var negTotal, neuTotal, posTotal;
 negTotal = neuTotal = posTotal = 0;
+
+//this variable affects how many documents added until trained, this affects
+//efficiency of training the bayesian classifier
+var docThreshold = 10000;
+
+//////////
 
 
 var tokenizer = new natural.WordTokenizer(),
@@ -58,8 +73,8 @@ function processTrainingData(dir) {
 				console.log("Error: unknown rating ", rating, " on tweet ",
 							tweet);
 		}
-		//Train every 1000 documents added
-		if (counter % 1000 == 0) {
+		//Train every docThreshold documents added
+		if (counter % docThreshold == 0) {
 			classifier.train()
 		}
 	});
@@ -113,6 +128,7 @@ Helper functions
 
 **/
 
+//TODO: additional improvements possible. Stop words, etc.
 //Given a line, removes extraneous information including:
 // RT 
 // @user
