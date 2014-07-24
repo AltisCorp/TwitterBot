@@ -6,7 +6,9 @@ var Bot = require('./bot')
   , server = http.createServer(app)
   , io = require('socket.io').listen(server)
   , natural = require("natural")
-  , classifier = new natural.BayesClassifier();
+  , classifier = new natural.BayesClassifier()
+  , mongo = require('mongodb')
+  , mongoClient = mongo.MongoClient;
 
 server.listen(8080);
 
