@@ -17,7 +17,6 @@ app.get('/', function (req, res) {
 
 //Initialize bot with API credentials
 var bot = new Bot(config1);
-
 io.sockets.on('connection', function(socket) {
   console.log('Connected to client.');
 })
@@ -38,7 +37,7 @@ natural.BayesClassifier.load('classifier.json', null, function(err, classifier) 
       if(!tweet.retweeted) { //ignore retweets
         //filter only tweets that contain keywords
         if (wordsInString(text, keyWords)) {
-          io.sockets.emit(classification, text);
+          io.sockets.emit('stream', text);
           console.log(classifier.classify(text), text);
         }
       }
