@@ -34,7 +34,8 @@ var docThreshold = 10000;
 
 
 var tokenizer = new natural.WordTokenizer(),
-	classifier = new natural.BayesClassifier();
+	classifier = new natural.BayesClassifier(),
+	stopWords = "assets/stopwords.csv";
 
 /**
 
@@ -51,7 +52,7 @@ function processTrainingData(dir) {
 		//numerical rating always second character
 		var rating = tokens[0].replace(/"/g, "");
 		var tweet = tokens[1].replace(/"/g, ""); //remove double quotes
-		tweet = removeExtraneous(tweet);
+		tweet = cleanTweet(tweet);
 		//console.log(rating, tweet);
 		switch(rating) {
 			case "0": //this is a negative tweet
@@ -87,7 +88,7 @@ function trainCSV(filename, callback) {
 		input: fs.createReadStream(file),
 		output: null,
 		terminal: false
-	})
+	});
 
 	rl.on("line", callback);
 
@@ -118,22 +119,4 @@ function trainCSV(filename, callback) {
 		console.log("Trained", posTotal, "positive tweets", neuTotal
 					,"neutral tweets, and", negTotal, "negative tweets");
 	});
-}
-
-processTrainingData("data/trainingTrimmed.csv");
-
-/**
-
-Helper functions
-
-**/
-
-//TODO: additional improvements possible. Stop words, etc.
-//Given a line, removes extraneous information including:
-// RT 
-// @user
-function removeExtraneous(line) {
-	line = line.replace(/\brt\b/gi,''); //remove RT
-	line = line.replace(/@\w+/gi, '');  //remove user
-	return line;
 }

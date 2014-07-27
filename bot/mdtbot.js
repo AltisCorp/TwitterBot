@@ -1,4 +1,5 @@
 var Bot = require('./bot')
+  , Util = require('./utils')
   , config1 = require('./config1')
   , express = require('express')
   , http = require('http')
@@ -11,6 +12,9 @@ var Bot = require('./bot')
   , mongoClient = mongo.MongoClient;
 
 server.listen(8080);
+
+//Helper functions
+var util = new Util();
 
 //Routing
 app.get('/', function (req, res) { 
@@ -33,46 +37,18 @@ natural.BayesClassifier.load('classifier.json', null, function(err, classifier) 
     var keyWords = ["taxi", "cab", "taxis", "cabs"] 
 
     bot.stream(params, function(tweet) {
-      var text = tweet.text;
       var classification;
+      var text = tweet.text;
+      //Cleaned tweet for better classification
+      var cleanTweet = text;//Util.cleanTweet(text);
 
       if(!tweet.retweeted) { //ignore retweets
         //filter only tweets that contain keywords
-        if (wordsInString(text, keyWords)) {
+        if (util.wordsInString(text, keyWords)) {
           io.sockets.emit('stream', text);
-          console.log(classifier.classify(text), text);
+          console.log(classifier.classify(cleanTweet), text);
         }
       }
     });
   }, 5000); //Every 5 seconds
 });
-
-
-/**
-
-Helper functions
-
-**/
-
-//Get date string for today's date (e.g. '2011-01-01')
-function datestring () {
-  var d = new Date(Date.now() - 5*60*60*1000);  //EST timezone
-  return d.getUTCFullYear()   + '-'
-  +  (d.getUTCMonth() + 1) + '-'
-  +   d.getDate();
-};
-
-//@param s - string to be compared
-//@param words - array of words to be tested
-//@return whether or not s contains any of the words in the words array
-function wordsInString(s, words) {
-  var word;
-  s = s.toLowerCase();
-  for (var i=0; i<words.length; i++) {
-    word = words[i].toLowerCase();
-    if (new RegExp('\\b' + word + '\\b', 'i').test(s)) {
-      return true;
-    }
-  }
-  return false;
-};

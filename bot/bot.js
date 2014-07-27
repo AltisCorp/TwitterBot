@@ -33,7 +33,7 @@ Bot.prototype.search = function (params, callback) {
 Bot.prototype.stream = function (params, callback) {
   var stream = this.twit.stream('statuses/filter', params);
   stream.on('tweet', callback);
-}
+};
 
 
 function randIndex (arr) {
