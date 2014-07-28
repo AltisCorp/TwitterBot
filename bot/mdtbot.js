@@ -1,5 +1,4 @@
 var Bot = require('./bot')
-  , Util = require('./utils')
   , config1 = require('./config1')
   , express = require('express')
   , http = require('http')
@@ -7,14 +6,15 @@ var Bot = require('./bot')
   , server = http.createServer(app)
   , io = require('socket.io').listen(server)
   , natural = require("natural")
-  , classifier = new natural.BayesClassifier()
-  , mongo = require('mongodb')
-  , mongoClient = mongo.MongoClient;
+  , classifier = new natural.BayesClassifier();
+
+var PreProcessor = require('../utils/preprocessor');
+var preProcessor = PreProcessor.getInstance();
 
 server.listen(8080);
 
-//Helper functions
-var util = new Util();
+//tweet pre processing
+//var processor = preProcessor.getInstance();
 
 //Routing
 app.get('/', function (req, res) { 
@@ -39,12 +39,12 @@ natural.BayesClassifier.load('classifier.json', null, function(err, classifier) 
     bot.stream(params, function(tweet) {
       var classification;
       var text = tweet.text;
-      //Cleaned tweet for better classification
-      var cleanTweet = text;//Util.cleanTweet(text);
+      //run some pre processing on the tweet
+      var cleanTweet = preProcessor.cleanTweet(text);
 
       if(!tweet.retweeted) { //ignore retweets
         //filter only tweets that contain keywords
-        if (util.wordsInString(text, keyWords)) {
+        if (wordsInString(text, keyWords)) {
           io.sockets.emit('stream', text);
           console.log(classifier.classify(cleanTweet), text);
         }
@@ -52,3 +52,27 @@ natural.BayesClassifier.load('classifier.json', null, function(err, classifier) 
     });
   }, 5000); //Every 5 seconds
 });
+
+//@return a properly formatted date string for current time in EST
+function dateString() {
+  var d = new Date(Date.now() - 5*60*60*1000);  //EST timezone
+  return d.getUTCFullYear()   + '-'
+  +  (d.getUTCMonth() + 1) + '-'
+  +   d.getDate();
+};
+
+
+//@param s - string to be compared
+//@param words - array of words to be tested
+//@return whether or not s contains any of the words in the words array
+function wordsInString(s, words) {
+  var word;
+  s = s.toLowerCase();
+  for (var i=0; i<words.length; i++) {
+    word = words[i].toLowerCase();
+    if (new RegExp('\\b' + word + '\\b', 'i').test(s)) {
+      return true;
+    }
+  }
+  return false;
+};
