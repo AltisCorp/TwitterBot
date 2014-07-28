@@ -1,7 +1,7 @@
 TwitterBot
 ==========
 
-Twitter bot for aggregating public sentiment on miami transit. This bot utilizes Node.js.
+Twitter bot for aggregating public sentiment on miami transit. This bot utilizes Node.js. Currently it is only looking at Taxis but this will eventually be extended to busses, rail, etc.
 
 
 Running the bot
