@@ -29,15 +29,20 @@ body {
 
 .logo {
   /*font-family: alba;*/
-  -webkit-text-stroke: 2px black;
+  -webkit-text-stroke: 3px #214466;
   color: white;
   font-size: 50px;
+  font-family:Impact, Charcoal, sans-serif;
+}
+
+#wrapper {
+  position:relative;
+  top: 50px; /* height of navbar */
+  margin-top: 2em;
 }
 
 .list-tweets {
-    position: relative;
-    top: 50px; /* height of navbar */
-    margin-top: 2em;
+  margin-top: 1em;
 }
 
 .item-tweet {
