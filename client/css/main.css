@@ -1,3 +1,5 @@
+@font-face { font-family: alba; src: url('fonts/ALBA.TTF'); }
+
 body {
   box-sizing: border-box;
   margin: 0;
@@ -5,11 +7,16 @@ body {
   background-color: #f4f4f4;
 }
 
+.navbar-brand {
+  font-family: alba;
+}
+
 .list-tweets {
     position: relative;
     top: 50px; /* height of navbar */
     margin-top: 2em;
 }
+
 .item-tweet {
   margin-bottom: 1em;
   padding: 0.5em;
