@@ -37,12 +37,12 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>-->
-          <a class="navbar-brand logo" href="#" style="color:white">TwitterBot</a>
+          <p class="navbar-brand logo" style="color:white;">TwitterBot</a>
         </div>
 
         <!-- the search bar -->
         <div class="navbar-right">
-          <form class="navbar-form navbar-left" role="search">
+          <form class="navbar-form" role="search">
             <div class="form-group">
               <input type="text" class="form-control" placeholder="Feed me a topic!">
             </div>
@@ -62,12 +62,22 @@
     <div class="container">
 
       <div id="wrapper">
-        <button type="submit" class="btn btn-primary center-block">Find out about us</button>
+        <div class="jumbotron">
+          <button type='button' class='close' data-dismiss='alert'>×</button>
+          <h3>Welcome!</h3>
+          <p>TwitterBot is a better way to understand Miami's public transportation system. Want to learn more?</p>
+          <p>
+            <a class="btn btn-primary" href="#" role="button">About »</a>
+          </p>
+        </div>
 
         <div id="tweetd" class="list-tweets">
-          <div class="item-tweet">This cab sucks</div>
-          <div class="item-tweet">This cab rocks</div>
-          <div class="item-tweet">This cab smells funny</div>
+          <div class="item-tweet"><div class="pos"></div>This cab sucks</div>
+          <div class="item-tweet"><div class="pos"></div>This cab rocks</div>
+          <div class="item-tweet"><div class="neg"></div>This cab smells funny</div>
+          <div class="item-tweet"><div class="neg"></div>Just had one of the scariest taxi rides of my life #whatisthetaxicabtest</div>
+          <div class="item-tweet"><div class="pos"></div>OMG I just love Miami cabs!</div>
+          <div class="item-tweet"><div class="neg"></div>No but really, is it just me or do these cabs just smell weird?</div>
         </div> <!-- tweetd -->
       </div><!-- wrapper -->
     </div><!-- /.container -->

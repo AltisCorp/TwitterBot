@@ -1,6 +1,6 @@
 @font-face { 
   font-family: 'alba'; 
-  src: url('fonts/ALBA.TTF'); 
+  src: url('../fonts/ALBA.TTF'); 
 }
 /* ^^ FOR USE LATER? ^^
 NOTE IF WE RELEASE THIS PROJECT WITH ALBA FONT, 
@@ -14,25 +14,20 @@ body {
   background-color: #f4f4f4;
 }
 
+.container { padding-top: 15px; }
+
 .navbar {
   background: #dceef6;
   color:white;
 }
 
-.navbar-brand {
-  color:white;
-}
-
-.navbar-inverse {
-  color:white;
-}
 
 .logo {
-  /*font-family: alba;*/
-  -webkit-text-stroke: 3px #214466;
+  -webkit-text-stroke: 3.5px #214466;
   color: white;
   font-size: 50px;
-  font-family:Impact, Charcoal, sans-serif;
+  font-family: alba, Impact, Charcoal, sans-serif;
+  cursor:default;
 }
 
 #wrapper {
@@ -41,13 +36,36 @@ body {
   margin-top: 2em;
 }
 
-.list-tweets {
-  margin-top: 1em;
+.jumbotron {
+  padding-left: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  background-color: #E6E6E6;
 }
+
+.list-tweets { margin-top: 1em; }
 
 .item-tweet {
   margin-bottom: 1em;
   padding: 0.5em;
-  border: 1px solid #eee;
+  border: 1px solid #CCCCCC;
+  border-radius: 3px;
   background-color: white;
+  padding-left:40px;
+}
+
+.item-tweet div{
+  height:30px;
+  width:30px;
+  margin-left: -33px;
+  position:absolute;
+  margin-top:-3px;
+}
+
+.pos {
+  background: url("../images/CheckMark.png") no-repeat;
+}
+
+.neg {
+  background: url("../images/xmark.gif") no-repeat;
 }
