@@ -22,4 +22,4 @@ For running the server side code you need only open a console in the bot folder 
 node mdtbot.js
 ```
 
-To tun the client code in the client folder open index.html
+To run the client code in the client folder open index.html
